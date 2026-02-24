@@ -1,0 +1,18 @@
+# 환경변수 (API 키 노출 방지)
+.env
+~/.openclaw/.env
+
+# OpenClaw 설정 및 데이터
+.openclaw/
+
+# 로그
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 에디터
+.vscode/
+.idea/
+*.swp
