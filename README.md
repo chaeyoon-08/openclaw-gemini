@@ -36,7 +36,7 @@ flowchart TD
 |------|-----|
 | 이미지 | `coollabsio/openclaw:latest` |
 | 포트 | `8080` |
-| 초기명령어 | `bash -c "apt-get update -qq && apt-get install -y nano vim locales locales-all && locale-gen ko_KR.UTF-8 && sleep infinity"` |
+| 초기명령어 | `bash -c "apt-get update -qq && apt-get install -y nano vim && sleep infinity"` |
 
 ---
 
