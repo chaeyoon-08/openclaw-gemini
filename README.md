@@ -88,6 +88,19 @@ openclaw-webui/
 
 ---
 
+## 포트 변경
+
+기본 포트: `8080`
+
+| 파일 | 위치 |
+|------|------|
+| `run.sh` | `--port 8080` 및 `ACCESS_URL` 내 `8080` |
+| `~/.openclaw/openclaw.json` | `gateway.port` 값 |
+
+> ⚠️ gcube 워크로드 배포 시 설정한 포트와 반드시 일치
+
+---
+
 ## 문제 해결
 
 **gateway 실행 실패**

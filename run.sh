@@ -20,7 +20,7 @@ fi
 
 # ── 게이트웨이 토큰 추출 ───────────────────────────────────
 TOKEN=$(python3 -c "import json; d=json.load(open('$CONFIG_DIR/openclaw.json')); print(d['gateway']['auth']['token'])")
-ACCESS_URL="http://localhost:18789/?token=${TOKEN}"
+ACCESS_URL="http://localhost:8080/?token=${TOKEN}"
 
 echo ""
 echo "🦞 OpenClaw WebUI"
@@ -36,7 +36,7 @@ fi
 
 # ── gateway 백그라운드 실행 ────────────────────────────────
 echo "🚀 Gateway 시작 중..."
-nohup openclaw gateway --port 18789 > "$CONFIG_DIR/gateway.log" 2>&1 &
+nohup openclaw gateway --port 8080 > "$CONFIG_DIR/gateway.log" 2>&1 &
 GATEWAY_PID=$!
 sleep 3
 
