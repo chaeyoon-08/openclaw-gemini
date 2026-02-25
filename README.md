@@ -19,7 +19,7 @@ flowchart TD
     I[gcube 서비스 URL 브라우저 접속] --> J
     J[Overview 페이지<br/>Gateway Token 필드에 토큰 붙여넣기<br/>→ Connect 클릭] --> K
     K{pairing required<br/>메시지 뜨는가?} -->|Yes| L
-    K -->|No| M
+    K -->|No: 이미 승인된 기기| M
     L[터미널에서 승인<br/>openclaw devices list<br/>openclaw devices approve requestId] --> M
     M[Health OK 확인 ✅] --> N
     N[Telegram에서 생성한 봇 검색<br/>아무 메시지 전송] --> O
