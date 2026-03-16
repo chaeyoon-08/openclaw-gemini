@@ -1,12 +1,12 @@
 #!/bin/bash
 # ============================================================
-# OpenClaw WebUI - Setup
+# OpenClaw Telegram Agent - Setup
 # 최초 1회 실행: 설정 파일 자동 생성
 # ============================================================
 set -e
 
 echo ""
-echo "🦞 OpenClaw WebUI Setup"
+echo "🦞 OpenClaw Telegram Agent Setup"
 echo "=============================="
 echo ""
 
@@ -21,11 +21,12 @@ fi
 export $(grep -v '^#' .env | grep -v '^$' | xargs)
 
 # ── API 키 확인 ────────────────────────────────────────────
-if [ -z "$GEMINI_API_KEY" ] && [ -z "$ANTHROPIC_API_KEY" ]; then
-  echo "❌ GEMINI_API_KEY 또는 ANTHROPIC_API_KEY가 설정되지 않았습니다."
-  echo "   무료 키 발급: https://aistudio.google.com/apikey"
+if [ -z "$ANTHROPIC_API_KEY" ]; then
+  echo "❌ ANTHROPIC_API_KEY가 설정되지 않았습니다."
+  echo "   https://console.anthropic.com/ 에서 발급하세요."
   exit 1
 fi
+echo "✅ Anthropic API 키 감지됨"
 
 # ── openclaw 설치 확인 ─────────────────────────────────────
 if ! command -v openclaw &> /dev/null; then
@@ -41,18 +42,9 @@ AGENT_DIR="$CONFIG_DIR/agents/main/agent"
 SESSION_DIR="$CONFIG_DIR/agents/main/sessions"
 mkdir -p "$CONFIG_DIR" "$AGENT_DIR" "$SESSION_DIR"
 
-# ── 모델 설정 (Gemini 우선, 없으면 Anthropic) ──────────────
-if [ -n "$GEMINI_API_KEY" ]; then
-  MODEL="google/gemini-2.5-flash"
-  PROVIDER="google"
-  API_KEY="$GEMINI_API_KEY"
-  echo "📡 모델: Google Gemini 2.5 Flash (무료)"
-else
-  MODEL="anthropic/claude-sonnet-4-5"
-  PROVIDER="anthropic"
-  API_KEY="$ANTHROPIC_API_KEY"
-  echo "📡 모델: Anthropic Claude Sonnet 4.5"
-fi
+# ── 모델 설정 ─────────────────────────────────────────────
+MODEL="anthropic/claude-sonnet-4-5"
+echo "📡 모델: Anthropic Claude Sonnet 4.5"
 
 # ── 게이트웨이 토큰 생성 ───────────────────────────────────
 GATEWAY_TOKEN=$(openssl rand -hex 24 2>/dev/null || cat /proc/sys/kernel/random/uuid | tr -d '-')
@@ -73,7 +65,7 @@ cat > "$CONFIG_DIR/openclaw.json" << JSONEOF
   },
   "agents": {
     "defaults": {
-      "model": "${MODEL}",
+      "model": "anthropic/claude-sonnet-4-5",
       "memorySearch": {
         "enabled": false
       }
@@ -83,9 +75,6 @@ cat > "$CONFIG_DIR/openclaw.json" << JSONEOF
     "port": 8080,
     "mode": "local",
     "bind": "lan",
-    "controlUi": {
-      "dangerouslyAllowHostHeaderOriginFallback": true
-    },
     "auth": {
       "mode": "token",
       "token": "${GATEWAY_TOKEN}"
@@ -114,10 +103,10 @@ cat > "$AGENT_DIR/auth-profiles.json" << JSONEOF
 {
   "version": 1,
   "profiles": {
-    "${PROVIDER}:default": {
+    "anthropic:default": {
       "type": "api_key",
-      "provider": "${PROVIDER}",
-      "key": "${API_KEY}"
+      "provider": "anthropic",
+      "key": "${ANTHROPIC_API_KEY}"
     }
   },
   "usageStats": {}
@@ -128,6 +117,22 @@ echo "✅ auth-profiles.json 생성 완료"
 # ── .env 복사 ──────────────────────────────────────────────
 cp .env "$CONFIG_DIR/.env"
 echo "✅ .env 복사 완료"
+
+# ── Knowledge Base 문서 복사 ───────────────────────────────
+WORKSPACE_DIR="$CONFIG_DIR/workspace"
+mkdir -p "$WORKSPACE_DIR"
+
+if [ -d "docs" ]; then
+  DOCS_COUNT=$(ls docs/*.md 2>/dev/null | wc -l)
+  if [ "$DOCS_COUNT" -gt 0 ]; then
+    cp docs/*.md "$WORKSPACE_DIR/" 2>/dev/null || true
+    echo "✅ Knowledge Base 문서 복사 완료 (${DOCS_COUNT}개)"
+  else
+    echo "ℹ️  docs/ 폴더에 .md 파일이 없습니다"
+  fi
+else
+  echo "ℹ️  docs/ 폴더가 없습니다"
+fi
 
 echo ""
 echo "✅ 설정 완료!"

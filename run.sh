@@ -1,7 +1,7 @@
 #!/bin/bash
 # ============================================================
-# OpenClaw WebUI - Run
-# 게이트웨이 실행 + 접속 URL 안내
+# OpenClaw Telegram Agent - Run
+# 게이트웨이 실행 + Telegram 페어링 안내
 # ============================================================
 set -e
 
@@ -22,7 +22,7 @@ fi
 TOKEN=$(python3 -c "import json; d=json.load(open('$CONFIG_DIR/openclaw.json')); print(d['gateway']['auth']['token'])")
 
 echo ""
-echo "🦞 OpenClaw WebUI"
+echo "🦞 OpenClaw Telegram Agent"
 echo "=============================="
 echo ""
 
@@ -47,10 +47,12 @@ fi
 echo "✅ Gateway 실행 중 (PID: $GATEWAY_PID)"
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🌐 gcube URL로 접속 후 Overview 페이지에서:"
-echo "   Gateway Token 필드에 아래 토큰 입력 후 Connect"
+echo "📱 Telegram 봇에 메시지를 보내면 페어링 코드가 발급됩니다."
 echo ""
-echo "🔑 토큰: ${TOKEN}"
+echo "  1. Telegram에서 @openclaw_claude_da_bot 에 메시지 전송"
+echo "  2. 봇이 보내주는 페어링 코드 복사"
+echo "  3. 아래 명령어로 승인:"
+echo "     openclaw pairing approve telegram [코드]"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  [종료]  $ pkill -9 -f 'openclaw'"
+echo "  [종료]  pkill -9 -f 'openclaw'"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
