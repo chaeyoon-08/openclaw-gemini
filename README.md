@@ -81,7 +81,8 @@ bash setup.sh
 다음 작업이 자동으로 실행됩니다:
 - openclaw NPM 패키지 전역 설치
 - `~/.openclaw/` 설정 파일 생성
-- `~/.openclaw/workspace/` 생성 및 `docs/*.md` 문서 복사
+- `~/.openclaw/workspace/` 생성 및 `identity/*.md` bootstrap 파일 복사 (AGENTS.md, IDENTITY.md)
+- `docs/*.md` Knowledge Base 문서 복사
 
 ### 4. Gateway 실행
 
@@ -119,7 +120,11 @@ openclaw pairing approve telegram [코드]
 
 ## Knowledge Base 문서
 
-`docs/` 폴더에 Markdown 파일을 저장하면, `setup.sh` 실행 시 자동으로 에이전트 workspace(`~/.openclaw/workspace/`)에 복사됩니다.
+`docs/` 폴더의 Markdown 파일과 `identity/` 폴더의 bootstrap 파일은 `setup.sh` 실행 시 자동으로 에이전트 workspace(`~/.openclaw/workspace/`)에 복사됩니다.
+
+- `identity/AGENTS.md` → 에이전트 운영 지시사항 (한국어 응답 설정)
+- `identity/IDENTITY.md` → 에이전트 정체성 (DA Assistant)
+- `docs/*.md` → Knowledge Base 참조 문서
 
 ### 사용 방법
 
@@ -155,7 +160,7 @@ ls ~/.openclaw/workspace/
 | 1. Gateway 실행 | `bash run.sh` 후 프로세스 확인 | PID 출력, 로그에 에러 없음 |
 | 2. Telegram 연결 | 봇에 메시지 전송 | 페어링 코드 수신 |
 | 3. 페어링 승인 | `openclaw pairing approve telegram [코드]` | 승인 완료 메시지 |
-| 4. AI 응답 | 봇에 "안녕, 넌 뭘 할 수 있어?" 전송 | Claude 기반 텍스트 응답 수신 |
+| 4. AI 응답 | 봇에 "안녕, 넌 뭘 할 수 있어?" 전송 | Claude 기반 한국어 텍스트 응답 수신 |
 | 5. 문서 기반 Q&A | 봇에 문서 관련 질문 전송 | workspace 문서 기반 정확한 답변 |
 
 ---
@@ -165,11 +170,14 @@ ls ~/.openclaw/workspace/
 ```
 openclaw-claude/
 ├── README.md              ← 실행 방법 (이 파일)
+├── identity/              ← 에이전트 Bootstrap 파일
+│   ├── AGENTS.md          ← 에이전트 지시사항 (한국어 답변)
+│   └── IDENTITY.md        ← 에이전트 정체성 (DA Assistant)
+├── docs/                  ← Knowledge Base 문서 저장소
+│   └── test_report.md     ← 테스트 검증용 문서
 ├── spec/
 │   ├── PRD.md             ← 제품 요구사항
 │   └── SPEC.md            ← 기술 명세
-├── docs/                  ← Knowledge Base 문서 저장소
-│   └── test_report.md     ← 테스트 검증용 문서
 ├── setup.sh               ← 최초 1회: ~/.openclaw 설정 자동 생성
 ├── run.sh                 ← gateway 실행 + Telegram 페어링 안내
 ├── .env.example           ← API 키 형식 가이드 (git 추적됨)

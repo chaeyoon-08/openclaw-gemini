@@ -75,6 +75,9 @@ cat > "$CONFIG_DIR/openclaw.json" << JSONEOF
     "port": 8080,
     "mode": "local",
     "bind": "lan",
+    "controlUi": {
+      "dangerouslyAllowHostHeaderOriginFallback": true
+    },
     "auth": {
       "mode": "token",
       "token": "${GATEWAY_TOKEN}"
