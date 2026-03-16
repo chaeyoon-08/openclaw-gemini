@@ -21,12 +21,12 @@ fi
 export $(grep -v '^#' .env | grep -v '^$' | xargs)
 
 # ── API 키 확인 ────────────────────────────────────────────
-if [ -z "$ANTHROPIC_API_KEY" ]; then
-  echo "❌ ANTHROPIC_API_KEY가 설정되지 않았습니다."
-  echo "   https://console.anthropic.com/ 에서 발급하세요."
+if [ -z "$GOOGLE_API_KEY" ]; then
+  echo "❌ GOOGLE_API_KEY가 설정되지 않았습니다."
+  echo "   https://aistudio.google.com/ 에서 발급하세요."
   exit 1
 fi
-echo "✅ Anthropic API 키 감지됨"
+echo "✅ Google API 키 감지됨"
 
 # ── openclaw 설치 확인 ─────────────────────────────────────
 if ! command -v openclaw &> /dev/null; then
@@ -43,8 +43,8 @@ SESSION_DIR="$CONFIG_DIR/agents/main/sessions"
 mkdir -p "$CONFIG_DIR" "$AGENT_DIR" "$SESSION_DIR"
 
 # ── 모델 설정 ─────────────────────────────────────────────
-MODEL="anthropic/claude-sonnet-4-5"
-echo "📡 모델: Anthropic Claude Sonnet 4.5"
+MODEL="google/gemini-2.5-flash"
+echo "📡 모델: Google Gemini 2.5 Flash"
 
 # ── 게이트웨이 토큰 생성 ───────────────────────────────────
 GATEWAY_TOKEN=$(openssl rand -hex 24 2>/dev/null || cat /proc/sys/kernel/random/uuid | tr -d '-')
@@ -65,7 +65,7 @@ cat > "$CONFIG_DIR/openclaw.json" << JSONEOF
   },
   "agents": {
     "defaults": {
-      "model": "anthropic/claude-sonnet-4-5",
+      "model": "google/gemini-2.5-flash",
       "memorySearch": {
         "enabled": false
       }
@@ -106,10 +106,10 @@ cat > "$AGENT_DIR/auth-profiles.json" << JSONEOF
 {
   "version": 1,
   "profiles": {
-    "anthropic:default": {
+    "google:default": {
       "type": "api_key",
-      "provider": "anthropic",
-      "key": "${ANTHROPIC_API_KEY}"
+      "provider": "google",
+      "key": "${GOOGLE_API_KEY}"
     }
   },
   "usageStats": {}

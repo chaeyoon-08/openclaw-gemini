@@ -6,7 +6,7 @@
 
 ## 프로젝트 개요
 
-`openclaw` NPM 패키지를 활용하여 Telegram 봇(`@openclaw_claude_da_bot`)과 Anthropic Claude API를 연결하는 AI 에이전트 게이트웨이. gcube 컨테이너 환경에서 `git clone → bash setup.sh → bash run.sh` 3단계로 배포된다.
+`openclaw` NPM 패키지를 활용하여 Telegram 봇(`@openclaw_claude_da_bot`)과 Google Gemini API를 연결하는 AI 에이전트 게이트웨이. gcube 컨테이너 환경에서 `git clone → bash setup.sh → bash run.sh` 3단계로 배포된다.
 
 **앱 로직은 이 repo에 없다.** 실제 게이트웨이, 채널 핸들러, 봇 통신은 모두 `openclaw` NPM 패키지가 담당한다. 이 repo는 설정 파일을 생성하는 셸 스크립트와, 에이전트 동작을 정의하는 bootstrap 파일(`identity/`)만 포함한다.
 
@@ -14,8 +14,8 @@
 
 ## 핵심 원칙 (절대 위반 금지)
 
-1. **Gemini 관련 코드를 절대 추가하지 않는다.** `GEMINI_API_KEY`, `google/gemini-*` 모델 ID, Gemini 분기 로직은 어떤 파일에도 포함해서는 안 된다.
-2. **AI 백엔드는 `anthropic/claude-sonnet-4-5` 단일 모델만 사용한다.** 모델 선택 분기, 변수화, 다른 모델 추가는 금지.
+1. **Claude 관련 코드를 절대 추가하지 않는다.** `ANTHROPIC_API_KEY`, `anthropic/claude-*` 모델 ID, Claude 분기 로직은 어떤 파일에도 포함해서는 안 된다.
+2. **AI 백엔드는 `google/gemini-2.5-flash` 단일 모델만 사용한다.** 모델 선택 분기, 변수화, 다른 모델 추가는 금지.
 3. **WebUI(브라우저 Control UI) 관련 코드와 안내를 추가하지 않는다.** `controlUi`, Gateway Token 안내, 브라우저 접속 흐름은 제거된 상태이며 복원하지 않는다.
 4. **채널은 Telegram만 활성화한다.** `openclaw.json`의 `channels`에 telegram 외 다른 채널을 추가하지 않는다.
 5. **파일 수를 최소화한다.** 소스 코드 디렉토리(`src/`, `lib/` 등)나 추가 설정 파일을 만들지 않는다. 필요한 변경은 기존 스크립트를 수정한다.
@@ -56,7 +56,7 @@ openclaw-claude/              ← repo 루트
 │   └── *.md                           ← docs/에서 복사
 └── agents/main/
     ├── agent/
-    │   └── auth-profiles.json         ← Anthropic API 키
+    │   └── auth-profiles.json         ← Google API 키
     └── sessions/
 ```
 
@@ -68,7 +68,7 @@ openclaw-claude/              ← repo 루트
 |------|------|----------|
 | `setup.sh` | `.env` 읽기 → openclaw 설치 → 설정 파일 생성 → identity/docs 복사 | 낮음 |
 | `run.sh` | 설정 검증 → 게이트웨이 백그라운드 실행 → 페어링 안내 출력 | 낮음 |
-| `.env.example` | `ANTHROPIC_API_KEY`, `TELEGRAM_BOT_TOKEN` 키 템플릿 | 거의 없음 |
+| `.env.example` | `GOOGLE_API_KEY`, `TELEGRAM_BOT_TOKEN` 키 템플릿 | 거의 없음 |
 | `identity/AGENTS.md` | 에이전트 지시사항 (한국어 답변 설정) | 지시사항 변경 시 |
 | `identity/IDENTITY.md` | 에이전트 정체성 (DA Assistant, 담당자님 호칭) | 정체성 변경 시 |
 | `docs/*.md` | Knowledge Base 문서 (에이전트 참조용) | 문서 추가/변경 시 |
@@ -84,7 +84,7 @@ openclaw-claude/              ← repo 루트
 {
   "agents": {
     "defaults": {
-      "model": "anthropic/claude-sonnet-4-5"
+      "model": "google/gemini-2.5-flash"
     }
   },
   "gateway": {
@@ -131,11 +131,11 @@ openclaw-claude/              ← repo 루트
 ## 작업 시 주의사항
 
 - **모든 작업 시**: 응답은 한국어로 작성할 것.
-- **`setup.sh` 수정 시**: `GEMINI_API_KEY`, `MODEL`/`PROVIDER`/`API_KEY` 변수가 다시 생기지 않도록 한다. API 키 검증은 `ANTHROPIC_API_KEY` 단독으로만 한다.
+- **`setup.sh` 수정 시**: `ANTHROPIC_API_KEY`, `MODEL`/`PROVIDER`/`API_KEY` 변수가 다시 생기지 않도록 한다. API 키 검증은 `GOOGLE_API_KEY` 단독으로만 한다.
 - **`run.sh` 수정 시**: 출력 메시지에 "Gateway Token", "Control UI", "gcube URL로 접속" 같은 WebUI 관련 문구를 포함하지 않는다.
-- **`.env.example` 수정 시**: `GEMINI_API_KEY`는 어떤 형태로도 추가하지 않는다.
-- **`README.md` 수정 시**: Telegram 봇 이름은 `@openclaw_claude_da_bot`이다. Gemini 발급 링크를 포함하지 않는다.
-- **설정 JSON 수정 시**: 모델 ID는 반드시 `"anthropic/claude-sonnet-4-5"`이다.
+- **`.env.example` 수정 시**: `ANTHROPIC_API_KEY`는 어떤 형태로도 추가하지 않는다.
+- **`README.md` 수정 시**: Telegram 봇 이름은 `@openclaw_claude_da_bot`이다. Anthropic 발급 링크를 포함하지 않는다.
+- **설정 JSON 수정 시**: 모델 ID는 반드시 `"google/gemini-2.5-flash"`이다.
 - **`identity/` 수정 시**: 수정 후 `bash setup.sh`를 재실행해야 workspace에 반영된다.
 - **`docs/` 수정 시**: 문서 추가/변경 후 `bash setup.sh`를 재실행해야 workspace에 반영된다.
 - **스크립트는 `set -e`로 실행된다.** 오류 발생 시 즉시 종료되므로, 조건부 명령(`|| true` 등)을 적절히 사용한다.

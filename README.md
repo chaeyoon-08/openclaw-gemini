@@ -1,6 +1,6 @@
 # OpenClaw Telegram AI Agent Gateway
 
-Telegram 봇 `@openclaw_claude_da_bot`과 Anthropic Claude API를 연결하는 AI 에이전트 게이트웨이.
+Telegram 봇 `@openclaw_claude_da_bot`과 Google Gemini API를 연결하는 AI 에이전트 게이트웨이.
 gcube 컨테이너 환경에서 `git clone → setup → run` 3단계로 배포 완료.
 
 ---
@@ -9,17 +9,17 @@ gcube 컨테이너 환경에서 `git clone → setup → run` 3단계로 배포 
 
 ```mermaid
 flowchart TD
-    A[Anthropic API 키 발급<br/>console.anthropic.com] --> B
+    A[Google API 키 발급<br/>aistudio.google.com] --> B
     B[Telegram BotFather에서 봇 생성<br/>봇 토큰 저장] --> C
     C[gcube 워크로드 배포<br/>포트 8080] --> D
     D[컨테이너 터미널 접속] --> E
-    E[git clone<br/>cd openclaw-claude] --> F
+    E[git clone<br/>cd openclaw-gemini] --> F
     F[cp .env.example .env<br/>nano .env에 API 키 입력] --> G
     G[bash setup.sh<br/>→ 설정 파일 자동 생성] --> H
     H[bash run.sh<br/>→ Gateway 백그라운드 실행] --> I
     I[Telegram 봇에 메시지 전송<br/>→ 페어링 코드 수신] --> J
     J[터미널에서 승인<br/>openclaw pairing approve telegram 코드] --> K
-    K[Telegram 봇 정상 작동 ✅<br/>Claude AI 대화 시작]
+    K[Telegram 봇 정상 작동 ✅<br/>Gemini AI 대화 시작]
 ```
 
 ---
@@ -36,11 +36,11 @@ flowchart TD
 
 ## 사전 준비
 
-### 1. Anthropic API 키 발급
+### 1. Google API 키 발급
 
-- 발급: https://console.anthropic.com/
-- 로그인 후 API Keys 메뉴에서 새 키 생성
-- `sk-ant-...` 형식의 키 복사
+- 발급: https://aistudio.google.com/
+- 로그인 후 **Get API key** 메뉴에서 새 키 생성
+- `AIza...` 형식의 키 복사
 
 ### 2. Telegram 봇 토큰 발급
 
@@ -55,8 +55,8 @@ flowchart TD
 ### 1. Clone
 
 ```bash
-git clone https://github.com/chaeyoon-08/openclaw-claude.git
-cd openclaw-claude
+git clone https://github.com/chaeyoon-08/openclaw-gemini.git
+cd openclaw-gemini
 ```
 
 ### 2. 환경변수 설정
@@ -68,7 +68,7 @@ nano .env
 
 `.env` 파일 내용:
 ```env
-ANTHROPIC_API_KEY=여기에_API_키_입력
+GOOGLE_API_KEY=여기에_API_키_입력
 TELEGRAM_BOT_TOKEN=여기에_봇_토큰_입력
 ```
 
@@ -160,7 +160,7 @@ ls ~/.openclaw/workspace/
 | 1. Gateway 실행 | `bash run.sh` 후 프로세스 확인 | PID 출력, 로그에 에러 없음 |
 | 2. Telegram 연결 | 봇에 메시지 전송 | 페어링 코드 수신 |
 | 3. 페어링 승인 | `openclaw pairing approve telegram [코드]` | 승인 완료 메시지 |
-| 4. AI 응답 | 봇에 "안녕, 넌 뭘 할 수 있어?" 전송 | Claude 기반 한국어 텍스트 응답 수신 |
+| 4. AI 응답 | 봇에 "안녕, 넌 뭘 할 수 있어?" 전송 | Gemini 기반 한국어 텍스트 응답 수신 |
 | 5. 문서 기반 Q&A | 봇에 문서 관련 질문 전송 | workspace 문서 기반 정확한 답변 |
 
 ---
@@ -168,7 +168,7 @@ ls ~/.openclaw/workspace/
 ## 파일 구조
 
 ```
-openclaw-claude/
+openclaw-gemini/
 ├── README.md              ← 실행 방법 (이 파일)
 ├── identity/              ← 에이전트 Bootstrap 파일
 │   ├── AGENTS.md          ← 에이전트 지시사항 (한국어 답변)
@@ -191,7 +191,7 @@ openclaw-claude/
 ├── openclaw.json          ← 게이트웨이 + 채널 설정
 ├── workspace/             ← 에이전트 작업 공간 (docs/*.md 복사됨)
 ├── agents/main/agent/
-│   └── auth-profiles.json ← Anthropic API 키
+│   └── auth-profiles.json ← Google API 키
 └── gateway.log            ← 게이트웨이 로그
 ```
 
@@ -272,7 +272,7 @@ cat ~/.openclaw/openclaw.json
 | 레이어 | 기술 |
 |--------|------|
 | 런타임 | Node.js (openclaw NPM 패키지) |
-| AI 모델 | Anthropic Claude Sonnet 4.5 (`anthropic/claude-sonnet-4-5`) |
+| AI 모델 | Google Gemini 2.5 Flash (`google/gemini-2.5-flash`) |
 | 채널 | Telegram Bot API (openclaw 내장 플러그인) |
 | 인프라 | gcube 컨테이너 (`coollabsio/openclaw:latest`) |
 | 설정 관리 | `~/.openclaw/openclaw.json`, `auth-profiles.json` |

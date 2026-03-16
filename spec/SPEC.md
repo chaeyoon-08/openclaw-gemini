@@ -12,7 +12,7 @@
 openclaw-claude/
 ├── setup.sh               ← 최초 1회: 설정 파일 생성 + workspace 구성
 ├── run.sh                 ← 게이트웨이 실행 + Telegram 페어링 안내
-├── .env.example           ← ANTHROPIC_API_KEY + TELEGRAM_BOT_TOKEN 템플릿
+├── .env.example           ← GOOGLE_API_KEY + TELEGRAM_BOT_TOKEN 템플릿
 ├── .env                   ← 실제 키 (gitignore)
 ├── .gitignore
 ├── README.md              ← Telegram 전용 배포 가이드
@@ -42,7 +42,7 @@ openclaw-claude/
 │   └── test_report.md                 ← docs/test_report.md에서 복사됨
 └── agents/main/
     ├── agent/
-    │   └── auth-profiles.json         ← Anthropic API 키
+    │   └── auth-profiles.json         ← Google API 키
     └── sessions/
 ```
 
@@ -55,12 +55,12 @@ openclaw-claude/
 **파일 내용** (전문):
 
 ```env
-ANTHROPIC_API_KEY=여기에_API_키_입력
+GOOGLE_API_KEY=여기에_API_키_입력
 TELEGRAM_BOT_TOKEN=여기에_봇_토큰_입력
 ```
 
 - 정확히 2줄, 빈 줄 없음
-- `GEMINI_API_KEY` 포함 금지
+- `ANTHROPIC_API_KEY` 포함 금지
 
 ---
 
@@ -76,7 +76,7 @@ TELEGRAM_BOT_TOKEN=여기에_봇_토큰_입력
 |------|------|---------|
 | 1 | .env 파일 존재 확인 | 14-18 |
 | 2 | .env 로드 (export) | 21 |
-| 3 | `ANTHROPIC_API_KEY` 검증 | 24-29 |
+| 3 | `GOOGLE_API_KEY` 검증 | 24-29 |
 | 4 | openclaw NPM 패키지 설치 확인 | 32-37 |
 | 5 | 설정 디렉토리 생성 (`~/.openclaw/`, `agents/main/agent/`, `sessions/`) | 40-43 |
 | 6 | 모델 고정 (`anthropic/claude-sonnet-4-5`) | 46-47 |
@@ -93,15 +93,15 @@ TELEGRAM_BOT_TOKEN=여기에_봇_토큰_입력
 
 | 항목 | 값 | 변경 금지 |
 |------|-----|----------|
-| 모델 ID | `anthropic/claude-sonnet-4-5` | 변수화 금지 |
+| 모델 ID | `google/gemini-2.5-flash` | 변수화 금지 |
 | 게이트웨이 포트 | `8080` | gcube 워크로드 포트와 일치 |
 | 게이트웨이 모드 | `local` | |
 | 게이트웨이 바인드 | `lan` | |
 | controlUi | `dangerouslyAllowHostHeaderOriginFallback: true` | gcube 리버스 프록시 필수 |
 | 인증 모드 | `token` | |
 | Telegram DM 정책 | `pairing` | |
-| auth-profiles 프로필 키 | `anthropic:default` | |
-| auth-profiles provider | `anthropic` | |
+| auth-profiles 프로필 키 | `google:default` | |
+| auth-profiles provider | `google` | |
 
 ---
 
@@ -213,7 +213,7 @@ TELEGRAM_BOT_TOKEN=여기에_봇_토큰_입력
   // 에이전트 기본 설정
   "agents": {
     "defaults": {
-      "model": "anthropic/claude-sonnet-4-5",   // Claude 단일 모델 (고정)
+      "model": "google/gemini-2.5-flash",         // Gemini 단일 모델 (고정)
       "memorySearch": {
         "enabled": false                         // 메모리 검색 비활성화
       }
@@ -264,10 +264,10 @@ TELEGRAM_BOT_TOKEN=여기에_봇_토큰_입력
 {
   "version": 1,
   "profiles": {
-    "anthropic:default": {
+    "google:default": {
       "type": "api_key",
-      "provider": "anthropic",
-      "key": "<ANTHROPIC_API_KEY>"
+      "provider": "google",
+      "key": "<GOOGLE_API_KEY>"
     }
   },
   "usageStats": {}
@@ -354,13 +354,13 @@ CLAUDE.md
 
 | 파일/디렉토리 | 유형 | 역할 |
 |-------------|------|------|
-| `.env.example` | 설정 템플릿 | `ANTHROPIC_API_KEY`, `TELEGRAM_BOT_TOKEN` |
+| `.env.example` | 설정 템플릿 | `GOOGLE_API_KEY`, `TELEGRAM_BOT_TOKEN` |
 | `setup.sh` | 셸 스크립트 | 설정 파일 생성, identity/docs 복사 |
-| `run.sh` | 셸 스크립트 | 게이트웨이 실행, WebUI 토큰 출력, 페어링 안내 |
+| `run.sh` | 셸 스크립트 | 게이트웨이 실행, 페어링 안내 |
 | `identity/AGENTS.md` | Bootstrap | 한국어 답변 지시 |
 | `identity/IDENTITY.md` | Bootstrap | DA Assistant 정체성 |
 | `docs/test_report.md` | Knowledge Base | 문서 Q&A 검증용 |
-| `README.md` | 문서 | WebUI + Telegram 배포 가이드 |
+| `README.md` | 문서 | Telegram 전용 배포 가이드 |
 
 ---
 
@@ -372,44 +372,27 @@ CLAUDE.md
 
 | 순서 | 섹션 | 내용 |
 |------|------|------|
-| 1 | 전체 흐름 (mermaid) | gcube 배포 → clone → setup → run → WebUI 접속 → Telegram 페어링 |
+| 1 | 전체 흐름 (mermaid) | gcube 배포 → clone → setup → run → Telegram 페어링 |
 | 2 | gcube 워크로드 설정 | 이미지, 포트, 초기명령어 |
-| 3 | 사전 준비 | Anthropic API 키, Telegram 봇 토큰 발급 방법 |
+| 3 | 사전 준비 | Google API 키, Telegram 봇 토큰 발급 방법 |
 | 4 | 실행 방법 | clone → .env 설정 → setup.sh → run.sh |
-| 5 | **WebUI 접속** | gcube URL 접속 → Gateway Token 입력 → Connect |
-| 6 | Telegram 페어링 | 봇 메시지 전송 → pairing approve |
-| 7 | Knowledge Base | docs/ 폴더 사용 방법 |
-| 8 | 테스트 성공 기준 | Gateway 실행 / WebUI 접속 / Telegram 연결 / AI 응답 |
-| 9 | 파일 구조 | repo 구조 + 런타임 디렉토리 |
-| 10 | 문제 해결 | Gateway 실패 / 프로세스 정리 / 봇 미응답 |
-
-### WebUI 접속 섹션 내용 (5번)
-
-```markdown
-### 5. WebUI 접속
-
-`bash run.sh` 실행 후 출력된 토큰을 사용해 브라우저에서 접속합니다.
-
-1. gcube 워크로드 URL로 브라우저 접속
-2. Overview 페이지의 **Gateway Token** 필드에 토큰 입력
-3. **Connect** 클릭
-
-> 토큰은 `bash run.sh` 실행 시 터미널에 출력됩니다.
-> 재확인: `python3 -c "import json; d=json.load(open('$HOME/.openclaw/openclaw.json')); print(d['gateway']['auth']['token'])"`
-```
+| 5 | Telegram 페어링 | 봇 메시지 전송 → pairing approve |
+| 6 | Knowledge Base | docs/ 폴더 사용 방법 |
+| 7 | 테스트 성공 기준 | Gateway 실행 / Telegram 연결 / AI 응답 |
+| 8 | 파일 구조 | repo 구조 + 런타임 디렉토리 |
+| 9 | 문제 해결 | Gateway 실패 / 프로세스 정리 / 봇 미응답 |
 
 ### 전체 흐름 mermaid 노드 구성
 
 ```
-A[Anthropic API 키 발급] → B[Telegram 봇 토큰 발급]
+A[Google API 키 발급] → B[Telegram 봇 토큰 발급]
 B → C[gcube 워크로드 배포 포트 8080]
 C → D[컨테이너 터미널 접속]
-D → E[git clone / cd openclaw-claude]
+D → E[git clone / cd openclaw-gemini]
 E → F[cp .env.example .env / nano .env]
 F → G[bash setup.sh]
-G → H[bash run.sh → Gateway 실행 + 토큰 출력]
-H → I[gcube URL 접속 → 토큰 입력 → WebUI 연결]
-I → J[Telegram 봇에 메시지 전송 → 페어링 코드 수신]
-J → K[openclaw pairing approve telegram 코드]
-K → L[Telegram 봇 정상 작동 ✅]
+G → H[bash run.sh → Gateway 실행]
+H → I[Telegram 봇에 메시지 전송 → 페어링 코드 수신]
+I → J[openclaw pairing approve telegram 코드]
+J → K[Telegram 봇 정상 작동 ✅]
 ```
