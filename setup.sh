@@ -66,6 +66,7 @@ cat > "$CONFIG_DIR/openclaw.json" << JSONEOF
   "agents": {
     "defaults": {
       "model": "google/gemini-2.5-flash",
+      "timeoutSeconds": 180,
       "memorySearch": {
         "enabled": false
       }
