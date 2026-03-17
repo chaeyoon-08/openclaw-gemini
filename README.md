@@ -9,7 +9,7 @@ gcube 컨테이너 환경에서 `git clone → setup → run` 3단계로 배포 
 
 ```mermaid
 flowchart TD
-    A[Google API 키 발급<br/>aistudio.google.com] --> B
+    A[Google API 키 발급<br/>Google AI Studio] --> B
     B[Telegram BotFather에서 봇 생성<br/>봇 토큰 저장] --> C
     C[gcube 워크로드 배포<br/>포트 8080] --> D
     D[컨테이너 터미널 접속] --> E
@@ -38,8 +38,8 @@ flowchart TD
 
 ### 1. Google API 키 발급
 
-- 발급: https://aistudio.google.com/
-- 로그인 후 **Get API key** 메뉴에서 새 키 생성
+- Google AI Studio에 접속하여 로그인
+- **Get API key** 메뉴에서 새 키 생성
 - `AIza...` 형식의 키 복사
 
 ### 2. Telegram 봇 토큰 발급
@@ -137,11 +137,10 @@ docs/
 
 # 2. setup.sh 실행 (자동 복사)
 bash setup.sh
-# 출력: ✅ Knowledge Base 문서 복사 완료 (3개)
 
 # 3. 복사 확인
 ls ~/.openclaw/workspace/
-# 출력: test_report.md  user_manual.md  faq.md
+# 출력: AGENTS.md  IDENTITY.md  test_report.md  user_manual.md  faq.md
 ```
 
 ### 검증 예시

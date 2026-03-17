@@ -16,8 +16,8 @@
 
 1. **Claude 관련 코드를 절대 추가하지 않는다.** `ANTHROPIC_API_KEY`, `anthropic/claude-*` 모델 ID, Claude 분기 로직은 어떤 파일에도 포함해서는 안 된다.
 2. **AI 백엔드는 `google/gemini-2.5-flash` 단일 모델만 사용한다.** 모델 선택 분기, 변수화, 다른 모델 추가는 금지.
-3. **WebUI(브라우저 Control UI) 관련 코드와 안내를 추가하지 않는다.** `controlUi`, Gateway Token 안내, 브라우저 접속 흐름은 제거된 상태이며 복원하지 않는다.
-4. **채널은 Telegram만 활성화한다.** `openclaw.json`의 `channels`에 telegram 외 다른 채널을 추가하지 않는다.
+3. **WebUI(브라우저 Control UI)는 사용 가능하다.** `controlUi` 설정을 포함하며, Gateway Token 안내 및 브라우저 접속 흐름을 지원한다.
+4. **현재는 Telegram 단독 운영이며, 추후 Slack을 추가할 예정이다.** 현재 `openclaw.json`의 `channels`에는 telegram만 활성화되어 있다.
 5. **파일 수를 최소화한다.** 소스 코드 디렉토리(`src/`, `lib/` 등)나 추가 설정 파일을 만들지 않는다. 필요한 변경은 기존 스크립트를 수정한다.
 
 ---
@@ -102,8 +102,8 @@ openclaw-claude/              ← repo 루트
 }
 ```
 
-- `gateway.controlUi` 키는 존재하지 않는다 (WebUI 미사용).
-- `channels`에 `telegram` 외 다른 채널을 추가하지 않는다.
+- `gateway.controlUi` 키를 포함한다 (WebUI 사용 가능, controlUi 설정 포함).
+- 현재 `channels`에는 `telegram`만 활성화되어 있으며, 추후 Slack 채널 추가 예정이다.
 
 ---
 
@@ -132,7 +132,7 @@ openclaw-claude/              ← repo 루트
 
 - **모든 작업 시**: 응답은 한국어로 작성할 것.
 - **`setup.sh` 수정 시**: `ANTHROPIC_API_KEY`, `MODEL`/`PROVIDER`/`API_KEY` 변수가 다시 생기지 않도록 한다. API 키 검증은 `GOOGLE_API_KEY` 단독으로만 한다.
-- **`run.sh` 수정 시**: 출력 메시지에 "Gateway Token", "Control UI", "gcube URL로 접속" 같은 WebUI 관련 문구를 포함하지 않는다.
+- **`run.sh` 수정 시**: 출력 메시지에 WebUI 토큰 안내("Gateway Token", "gcube URL로 접속")와 Telegram 페어링 안내를 모두 포함한다.
 - **`.env.example` 수정 시**: `ANTHROPIC_API_KEY`는 어떤 형태로도 추가하지 않는다.
 - **`README.md` 수정 시**: Telegram 봇 이름은 `@openclaw_claude_da_bot`이다. Anthropic 발급 링크를 포함하지 않는다.
 - **설정 JSON 수정 시**: 모델 ID는 반드시 `"google/gemini-2.5-flash"`이다.
